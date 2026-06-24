@@ -1,0 +1,596 @@
+body {
+    margin: 0;
+    font-family: Arial;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 60px;
+    background: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    box-sizing: border-box;
+}
+
+.logo {
+    height: 45px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    font-size: 14px;
+}
+
+/* BACKGROUND */
+.bg-container {
+    display: flex;
+    height: 100vh;
+    margin-top: 70px; /* pushes below navbar */
+}
+
+.left {
+    width: 50%;
+    background: #f5f5f5;
+}
+
+.right {
+    width: 50%;
+    background: #3b5b8a;
+}
+
+/* LOGIN BOX */
+.login-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    width: 340px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.15);
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+}
+
+/* INPUT */
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* BUTTON */
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: #3b5b8a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.login-box button:hover {
+    background: #2c4a7a;
+}
+
+/* FORGOT */
+.forgot {
+    font-size: 13px;
+    color: #3b5b8a;
+    cursor: pointer;
+}
+/* SIDEBAR LOGO */
+.sidebar-logo {
+    width: 120px;
+    display: block;
+    margin: 20px auto;
+}
+
+/* ACTIVE MENU */
+.sidebar a.active {
+    background: white;
+    color: #1f9db7;
+    font-weight: bold;
+}
+
+/* TOPBAR */
+.topbar {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* CLOCK CENTER */
+.clock-container {
+    text-align: center;
+    margin-top: 80px;
+}
+
+/* TIME */
+.clock-container h1 {
+    font-size: 40px;
+    margin: 10px;
+}
+
+.clock-container p {
+    color: gray;
+}
+
+/* BUTTONS */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    margin-top: 40px;
+}
+
+/* CLOCK CARDS */
+.clock-card {
+    width: 140px;
+    height: 140px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.clock-card img {
+    width: 40px;
+    margin-bottom: 10px;
+}
+
+/* COLORS */
+.clock-card.in {
+    background: #0f4c75;
+    color: white;
+}
+
+.clock-card.out {
+    background: #555;
+    color: white;
+}
+
+/* HOVER EFFECT */
+.clock-card:hover {
+    transform: scale(1.05);
+}
+/* FILTERS */
+.filters {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.filters input {
+    padding: 10px;
+    width: 150px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* BUTTONS */
+.filter-btn {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.reset-btn {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* TABLE */
+.payslip-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.payslip-table th {
+    text-align: left;
+    padding: 12px;
+    background: #f2f2f2;
+}
+
+.payslip-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* ROW HOVER */
+.payslip-table tr:hover {
+    background: #f9f9f9;
+}
+
+/* TOPBAR */
+
+
+.right-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search {
+    padding: 8px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+}
+
+.profile {
+    font-size: 13px;
+}
+
+/* BREADCRUMB */
+.breadcrumb {
+    font-size: 13px;
+    color: #888;
+}
+
+/* FILTERS */
+.filters {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.filters input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.filter-btn {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+}
+
+.reset-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+}
+
+/* TABLE */
+.payslip-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.payslip-table th {
+    background: #f2f2f2;
+    padding: 12px;
+    text-align: left;
+}
+
+.payslip-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+/* PAGINATION */
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.pagination span {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.active-page {
+    background: #3498db;
+    color: white;
+}
+/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    background: #2f8fa6;
+    color: white;
+    position: fixed;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar a i {
+    width: 20px;
+}
+
+/* ACTIVE */
+.sidebar a.active {
+    background: white;
+    color: #2f8fa6;
+    font-weight: bold;
+}
+
+/* TOPBAR */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    align-items: center;
+}
+
+.search {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+}
+
+/* FILTERS */
+.filters input {
+    width: 150px;
+}
+
+.filter-btn {
+    background: #2ecc71;
+    border-radius: 5px;
+}
+
+.reset-btn {
+    background: #3498db;
+    border-radius: 5px;
+}
+
+/* TABLE */
+.payslip-table tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* PAGINATION */
+.pagination span {
+    border-radius: 5px;
+}
+
+.active-page {
+    background: #3498db;
+}
+/* FIX SIDEBAR OVERLAP */
+.main {
+    margin-left: 230px;
+    padding: 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.left-top {
+    margin: 0;
+}
+
+.left-top h2 {
+    margin: 0;
+}
+/* BACKGROUND SPLIT */
+.bg-container {
+    display: flex;
+    height: 100vh;
+    margin-top: 70px;
+}
+
+.left {
+    width: 50%;
+    background: #f5f5f5;
+    position: relative;
+}
+
+.right {
+    width: 50%;
+    background: #3b5b8a;
+    position: relative;
+}
+
+/* BACKGROUND IMAGES */
+.bg-img {
+    position: absolute;
+    bottom: 0;
+    width: 300px;
+}
+
+.left-img {
+    left: 40px;
+}
+
+.right-img {
+    right: 40px;
+}
+
+/* LOGIN BOX CENTER */
+.login-box {
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 360px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.15);
+}
+
+/* LABELS */
+.login-box label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+/* INPUT */
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: black;
+}
+
+/* BUTTON */
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    background: #3b5b8a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+/* FORGOT */
+.forgot {
+    color: #3b5b8a;
+    font-size: 13px;
+    margin-top: 10px;
+}
+.login-box select {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: black;
+}
+.add-btn {
+    background: #2ecc71;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.add-btn:hover {
+    background: #27ae60;
+}
+/* ICON BUTTONS (LIKE FIGMA) */
+.icon-btn {
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.icon-btn.blue {
+    background: #d6e4ff;
+    color: #2f6fed;
+}
+
+.icon-btn.green {
+    background: #d4f5e9;
+    color: #27ae60;
+}
+
+.icon-btn.red {
+    background: #ffd6d6;
+    color: #e74c3c;
+}
+
+.icon-btn:hover {
+    opacity: 0.8;
+}
+/* ICON BUTTONS */
+.icon-btn {
+    border: none;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.icon-btn.blue {
+    background: #d6e4ff;
+    color: #2f6fed;
+}
+
+.icon-btn:hover {
+    opacity: 0.8;
+}
+.add-btn {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.add-btn:hover {
+    background: #138496;
+}
+/* STATUS COLORS */
+.status-present {
+    color: green;
+    font-weight: bold;
+}
+
+.status-late {
+    color: orange;
+    font-weight: bold;
+}
+
+.status-absent {
+    color: red;
+    font-weight: bold;
+}
+/* FIX CLICK ISSUE */
+.sidebar {
+    z-index: 1000;
+    position: fixed;
+}
+
+.main {
+    position: relative;
+    z-index: 1;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+h2, h3, label {
+    text-decoration: none;
+}
+
+
