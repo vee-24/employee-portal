@@ -43,15 +43,13 @@ export default function LoginPage() {
       .from('employees')
       .select('*')
       .eq('email', email)
-      .eq('password', password)
       .maybeSingle()
   
     setLoading(false)
   
-    console.log("DB RESULT:", data)
-    console.log("DB ERROR:", error)
-  
-    if (!data) {
+    // 👇 PUT THIS EXACT BLOCK HERE
+    if (error || !data) {
+      console.log(error)
       setError('Invalid email or password')
       return
     }
