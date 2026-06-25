@@ -297,42 +297,87 @@ export default function ClockInOutPage() {
           </CardContent>
         </Card>
 
-        {/* HISTORY */}
-        <Card className="mt-10">
-          <CardContent className="p-8">
+       {/* HISTORY */}
+<Card className="mt-10 rounded-3xl border-0 shadow-xl bg-white">
+  <CardContent className="p-8">
 
-            <h2 className="text-2xl font-bold text-[#3b5b8a] mb-6">
-              Attendance History
-            </h2>
+    <h2 className="text-2xl font-bold text-[#3b5b8a] mb-6">
+      Attendance History
+    </h2>
 
-            {history.length === 0 ? (
-              <p>No records yet</p>
-            ) : (
-              <table className="w-full">
+    {history.length === 0 ? (
+      <div className="text-center py-10 text-gray-500">
+        No attendance records yet.
+      </div>
+    ) : (
+      <div className="overflow-x-auto rounded-2xl border border-gray-200">
 
-                <thead>
-                  <tr className="border-b">
-                    <th>Clock In</th>
-                    <th>Clock Out</th>
-                    <th>Hours</th>
-                  </tr>
-                </thead>
+        <table className="w-full text-left">
 
-                <tbody>
-                  {history.map((r) => (
-                    <tr key={r.id} className="border-b">
-                      <td>{formatKLTime(r.clock_in)}</td>
-                      <td>{formatKLTime(r.clock_out)}</td>
-                      <td>{calculateHours(r.clock_in, r.clock_out)}</td>
-                    </tr>
-                  ))}
-                </tbody>
+          <thead className="bg-[#f5f7fb]">
 
-              </table>
-            )}
+            <tr>
 
-          </CardContent>
-        </Card>
+              <th className="px-6 py-4 font-semibold text-gray-700">
+                No.
+              </th>
+
+              <th className="px-6 py-4 font-semibold text-gray-700">
+                Clock In
+              </th>
+
+              <th className="px-6 py-4 font-semibold text-gray-700">
+                Clock Out
+              </th>
+
+              <th className="px-6 py-4 font-semibold text-gray-700 text-center">
+                Hours
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {history.map((r, index) => (
+
+              <tr
+                key={r.id}
+                className="border-t hover:bg-[#f8fbff] transition"
+              >
+
+                <td className="px-6 py-4 text-gray-600">
+                  {index + 1}
+                </td>
+
+                <td className="px-6 py-4">
+                  {formatKLTime(r.clock_in)}
+                </td>
+
+                <td className="px-6 py-4">
+                  {formatKLTime(r.clock_out)}
+                </td>
+
+                <td className="px-6 py-4 text-center">
+                  <span className="px-3 py-1 rounded-full bg-blue-50 text-[#3b5b8a] font-semibold text-sm">
+                    {calculateHours(r.clock_in, r.clock_out)}
+                  </span>
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
+    )}
+
+  </CardContent>
+</Card>
 
       </div>
     </div>
