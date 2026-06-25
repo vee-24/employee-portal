@@ -20,52 +20,48 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  
 
   async function login() {
-
     setError('')
-
+  
     if (!email || !password) {
-
       setError('Please fill in all fields')
       return
     }
-
+  
     setLoading(true)
-
-    const { data, error } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('email', email)
-      .eq('password', password)
-      .single()
-
+  
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    })
+  
     setLoading(false)
-
-    if (error || !data) {
-
+  
+    if (error) {
       setError('Invalid email or password')
       return
     }
-
-    // SAVE USER SESSION
-    localStorage.setItem(
-      'currentUser',
-      JSON.stringify(data)
-    )
-
-    // REDIRECT BASED ON ROLE
-    if (data.role === 'admin') {
-
+  
+    // store session user
+    localStorage.setItem('user', JSON.stringify(data.user))
+  
+    // get role from employees table
+    const { data: profile } = await supabase
+      .from('employees')
+      .select('*')
+      .eq('email', email)
+      .single()
+  
+    if (profile?.role === 'admin') {
       router.push('/manage-employee')
-
     } else {
-
       router.push('/clockin-out')
-
     }
   }
 
@@ -146,15 +142,23 @@ export default function LoginPage() {
                   Password
                 </label>
 
-                <Input
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
-                  className="h-12"
-                />
+                <div className="relative">
+  <Input
+    type={showPassword ? "text" : "password"}
+    placeholder="Enter password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    className="h-12 pr-20"
+  />
+
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#3b5b8a]"
+  >
+    {showPassword ? "Hide" : "Show"}
+  </button>
+</div>
 
               </div>
 
