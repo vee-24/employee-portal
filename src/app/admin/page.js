@@ -27,6 +27,7 @@ export default function AdminDashboard() {
   }, [])
 
   async function loadDashboard() {
+    let employeeMap = {}
 
     //////////////////////////////////////////
     // EMPLOYEES
@@ -53,6 +54,10 @@ export default function AdminDashboard() {
       setRecentEmployees(
         onlyEmployees.slice(0, 5)
       )
+      
+      employees.forEach((emp) => {
+        employeeMap[emp.id] = emp
+      })
     }
 
     //////////////////////////////////////////
@@ -68,8 +73,14 @@ export default function AdminDashboard() {
 
       setAttendanceCount(attendance.length)
 
+      const attendanceWithEmployee = attendance.map((att) => ({
+        ...att,
+        employeeCode: employeeMap[att.employee_id]?.empid || att.employee_id,
+        employeeName: employeeMap[att.employee_id]?.name || ''
+      }))
+      
       setRecentAttendance(
-        attendance.slice(0, 5)
+        attendanceWithEmployee.slice(0, 5)
       )
 
       ////////////////////////////////////////
@@ -359,9 +370,10 @@ export default function AdminDashboard() {
                         className="border-b hover:bg-gray-50 transition"
                       >
 
-                        <td className="py-4">
-                          {att.employee_id}
-                        </td>
+<td className="py-4">
+  {att.employeeCode}
+  {att.employeeName ? ` - ${att.employeeName}` : ''}
+</td>
 
                         <td className="py-4">
                         {att.clock_in

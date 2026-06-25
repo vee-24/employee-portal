@@ -25,10 +25,22 @@ const [otRate, setOtRate] = useState(0)
 const [otHours, setOtHours] = useState(0)
 
   const [message, setMessage] = useState('')
+  const [payrollData, setPayrollData] = useState([])
+  const [totalHoursWorked, setTotalHoursWorked] = useState(0)
+const [calculatedOtHours, setCalculatedOtHours] = useState(0)
 
   useEffect(() => {
     loadEmployees()
   }, [])
+
+  useEffect(() => {
+    fetchPayslips()
+  }, [])
+  useEffect(() => {
+    if (selectedEmployee) {
+      updateHours(selectedEmployee)
+    }
+  }, [month, year])
 
   async function loadEmployees() {
 
@@ -45,28 +57,46 @@ const [otHours, setOtHours] = useState(0)
     setEmployees(filtered)
   }
 }
-  function handleEmployee(id) {
+async function fetchPayslips() {
+  const { data, error } = await supabase
+    .from('payslips')
+    .select('*')
+    .order('id', { ascending: false })
 
-    setSelectedEmployee(id)
+  if (!error) {
+    setPayrollData(data || [])
+  }
+}
 
-    const emp = employees.find(
-      e => String(e.id) === String(id)
-    )
 
-    if (emp) {
+async function handleEmployee(id) {
+  setSelectedEmployee(id)
 
-      setEmployeeName(emp.name)
-      setEmployeeId(emp.empid)
-    
-      setSalary(emp.basic_salary || 0)
-      setAllowance(emp.allowance || 0)
-    
-      setEpfPercent(emp.epf_percent || 0)
-      setSocsoPercent(emp.socso_percent || 0)
-    
-      setOtRate(emp.ot_rate || 0)
-    
-    }
+  const emp = employees.find(e => String(e.id) === String(id))
+  if (!emp) {
+    return
+  }
+
+  setEmployeeName(emp.name)
+  setEmployeeId(emp.empid)
+  setSalary(emp.basic_salary || 0)
+  setAllowance(emp.allowance || 0)
+  setEpfPercent(emp.epf_percent || 0)
+  setSocsoPercent(emp.socso_percent || 0)
+  setOtRate(emp.ot_rate || 0)
+
+  // ✅ This is crucial
+  const { totalHours, otHours } = await calculateHoursWorked(emp.id, month, year)
+  setTotalHoursWorked(totalHours)
+  setCalculatedOtHours(otHours)
+  setOtHours(otHours)
+}
+  
+  async function updateHours(empid) {
+    const { totalHours, otHours } = await calculateHoursWorked(empid, month, year)
+    setTotalHoursWorked(totalHours)
+    setCalculatedOtHours(otHours)
+    setOtHours(otHours) // keep payroll calculation consistent
   }
 
   const grossSalary =
@@ -85,61 +115,205 @@ const netSalary =
   epfDeduction -
   socsoDeduction
 
+
+  async function getAttendanceHours(empid, month, year) {
+
+    const startDate = `${year}-${String(monthIndex(month)).padStart(2, '0')}-01`
+    const endDate = `${year}-${String(monthIndex(month) + 1).padStart(2, '0')}-01`
+  
+    const { data } = await supabase
+      .from('attendance')
+      .select('*')
+      .eq('employee_id', empid)
+      .gte('clock_in', startDate)
+      .lt('clock_in', endDate)
+  
+    let totalHours = 0
+    let otHours = 0
+  
+    data?.forEach(r => {
+      if (r.clock_in && r.clock_out) {
+        const hours =
+          (new Date(r.clock_out) - new Date(r.clock_in)) /
+          (1000 * 60 * 60)
+  
+        totalHours += hours
+  
+        if (hours > 8) {
+          otHours += (hours - 8)
+        }
+      }
+    })
+  
+    return { totalHours, otHours }
+  }
+  function monthIndex(month) {
+    const months = {
+      January: 1,
+      February: 2,
+      March: 3,
+      April: 4,
+      May: 5,
+      June: 6,
+      July: 7,
+      August: 8,
+      September: 9,
+      October: 10,
+      November: 11,
+      December: 12
+    }
+  
+    return months[month]
+  }
+
+  async function calculateHoursWorked(empid, month, year) {
+    const startDate = `${year}-${String(monthIndex(month)).padStart(2, '0')}-01`
+    const endDate = `${year}-${String(monthIndex(month) + 1).padStart(2, '0')}-01`
+  
+    const { data } = await supabase
+      .from('attendance')
+      .select('*')
+      .eq('employee_id', empid)
+      .gte('clock_in', startDate)
+      .lt('clock_in', endDate)
+  
+    let total = 0
+    let ot = 0
+  
+    data?.forEach(r => {
+      if (r.clock_in && r.clock_out) {
+        const hours = (new Date(r.clock_out) - new Date(r.clock_in)) / (1000 * 60 * 60)
+        total += hours
+        if (hours > 8) ot += (hours - 8)
+      }
+    })
+  
+    // ✅ fixed decimals here
+    return {
+      totalHours: Number(total.toFixed(2)),
+      otHours: Number(ot.toFixed(2))
+    }
+  }
+
+  async function getLeaveDays(empid, month, year) {
+
+    const startDate = `${year}-${String(monthIndex(month)).padStart(2, '0')}-01`
+    const endDate = `${year}-${String(monthIndex(month) + 1).padStart(2, '0')}-01`
+  
+    const { data } = await supabase
+      .from('leave_requests')
+      .select('*')
+      .eq('employee_id', empid)
+      .eq('status', 'Approved')
+      .gte('start_date', startDate)
+      .lt('start_date', endDate)
+  
+    let totalDays = 0
+  
+    data?.forEach(l => {
+      const start = new Date(l.start_date)
+      const end = new Date(l.end_date)
+  
+      const diff =
+        Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1
+  
+      totalDays += diff
+    })
+  
+    return totalDays
+  }
+
   async function generatePayslip() {
 
-    if (
-      !selectedEmployee ||
-      !salary
-    ) {
+    if (!selectedEmployee || !salary) {
       setMessage('Please complete all fields')
       return
     }
-
-    const { error } = await supabase
-  .from('payslips')
-  .insert([
-    {
-      employee_id: employeeId,
-      employee_name: employeeName,
-    
-      month: `${month} ${year}`,
-    
-      salary: Number(salary),
-      allowance: Number(allowance),
-    
-      epf_percent: Number(epfPercent),
-      socso_percent: Number(socsoPercent),
-    
-      ot_rate: Number(otRate),
-      ot_hours: Number(otHours),
-    
-      net_salary: Number(netSalary.toFixed(2))
-    }
-    ])
-
-      if (error) {
-
-        console.log(error)
-      
-        setMessage(
-          `❌ Failed: ${error.message}`
-        )
-      
-      } else {
-      
-        setMessage(
-          '✅ Payslip Generated Successfully'
-        )
-      
-        setSelectedEmployee('')
-        setEmployeeName('')
-        setEmployeeId('')
-      
-        setSalary('')
-        setAllowance('0')
-       
-      
+  
+    // Get attendance and leave data
+    const { totalHours, otHours } = await getAttendanceHours(selectedEmployee, month, year)
+    const leaveDays = await getLeaveDays(employeeId, month, year)
+  
+    const basic = Number(salary)
+    const allowanceVal = Number(allowance)
+  
+    // Round OT hours to 2 decimals
+    const roundedOtHours = Number(otHours.toFixed(2))
+    const roundedTotalHours = Number(totalHours.toFixed(2))
+  
+    // Calculate OT pay and gross salary, round to 2 decimals
+    const otPay = Number((calculatedOtHours * Number(otRate || 0)).toFixed(2))
+    const gross = Number((basic + allowanceVal + otPay).toFixed(2))
+  
+    // Leave deduction
+    const dailyRate = basic / 30
+    const leaveDeduction = Number((leaveDays * dailyRate).toFixed(2))
+  
+    // EPF and SOCSO
+    const epf = Number((gross * (epfPercent / 100)).toFixed(2))
+    const socso = Number((gross * (socsoPercent / 100)).toFixed(2))
+  
+    // Net salary
+    const net = Number((gross - epf - socso - leaveDeduction).toFixed(2))
+  
+    // Save to database with rounded values
+    const { error } = await supabase.from('payslips').insert([
+      {
+        employee_id: Number(selectedEmployee),
+        employee_name: employeeName,
+        month: `${month} ${year}`,
+  
+        salary: basic,
+        allowance: allowanceVal,
+  
+        ot_hours: roundedOtHours,
+        ot_rate: otRate,
+  
+        epf_percent: epfPercent,
+        socso_percent: socsoPercent,
+  
+        leave_days: leaveDays,
+        leave_deduction: leaveDeduction,
+        total_hours: roundedTotalHours,
+  
+        net_salary: net
       }
+    ])
+  
+    if (error) {
+      console.log('PAYSLIP ERROR:', error)
+      setMessage('❌ ' + error.message)
+    } else {
+      setMessage('✅ Payslip Generated Successfully')
+      fetchPayslips()
+    }
+  }
+
+  function exportExcel() {
+    const data = payrollData.map(p => ({
+      Employee: p.employee_name,
+      Month: p.month,
+      Salary: p.salary,
+      Allowance: p.allowance,
+      OT_Hours: p.ot_hours,
+      Leave_Days: p.leave_days,
+      Net_Salary: p.net_salary
+    }))
+  
+    const worksheet = XLSX.utils.json_to_sheet(data)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payroll")
+  
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array"
+    })
+  
+    const file = new Blob([excelBuffer], {
+      type: "application/octet-stream"
+    })
+  
+    saveAs(file, `Payroll_${month}_${year}.xlsx`)
   }
 
   return (
@@ -267,11 +441,9 @@ const netSalary =
           </label>
 
           <select
-            value={selectedEmployee}
-            onChange={(e) =>
-              handleEmployee(e.target.value)
-            }
-            className="w-full h-12 border rounded-lg px-3 mt-2 mb-6"
+             value={selectedEmployee}
+  onChange={async (e) => await handleEmployee(e.target.value)}
+  className="w-full h-12 border rounded-lg px-3 mt-2 mb-6"
           >
 
             <option value="">
@@ -385,16 +557,17 @@ const netSalary =
 
           <div className="mt-6">
 
-  <label>OT Hours</label>
+  
 
-  <input
-    type="number"
-    value={otHours}
-    onChange={(e) =>
-      setOtHours(e.target.value)
-    }
-    className="w-full h-12 border rounded-lg px-3 mt-2"
-  />
+</div>
+<div className="mt-6 p-4 bg-blue-50 rounded-xl">
+
+  <p className="font-bold text-[#3b5b8a]">
+    Hours Worked 
+  </p>
+
+  <p>Total Hours: {totalHoursWorked.toFixed(2)} hrs</p>
+<p>OT Hours: {calculatedOtHours.toFixed(2)} hrs</p>
 
 </div>
 <div className="mt-8 space-y-2">
@@ -412,7 +585,7 @@ const netSalary =
   </p>
 
   <p>
-    OT Hours: {otHours}
+    OT Hours: {otHours.toFixed(2)}
   </p>
 
   <p>
@@ -456,7 +629,7 @@ const netSalary =
 
             <h2 className="text-4xl font-bold text-[#3b5b8a]">
 
-              RM {netSalary}
+              RM {netSalary.toFixed(2)}
 
             </h2>
 

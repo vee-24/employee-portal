@@ -21,6 +21,7 @@ export default function ApplyLeavePage() {
   const [currentUser, setCurrentUser] = useState(null)
   const [myLeaves, setMyLeaves] = useState([])
 
+
 useEffect(() => {
   const user = JSON.parse(
     localStorage.getItem('currentUser')
