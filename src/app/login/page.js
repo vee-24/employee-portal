@@ -50,7 +50,7 @@ export default function LoginPage() {
       return
     }
   
-    localStorage.setItem('user', JSON.stringify(data))
+    localStorage.setItem('currentUser', JSON.stringify(data))
   
     // ✅ ROLE-BASED REDIRECT (THIS IS THE FIX)
     if (data.role === 'admin') {

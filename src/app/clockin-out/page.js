@@ -36,7 +36,7 @@ export default function ClockInOutPage() {
 
     if (!user) {
 
-      window.location.href = '/login'
+      router.push('/login')
       return
     }
 
