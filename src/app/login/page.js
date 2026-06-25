@@ -36,27 +36,28 @@ export default function LoginPage() {
   
     setLoading(true)
   
-    console.log("EMAIL:", email)
-    console.log("PASSWORD:", password)
-  
     const { data, error } = await supabase
       .from('employees')
       .select('*')
       .eq('email', email)
-      .maybeSingle()
+      .eq('password', password)
+      .single()
   
     setLoading(false)
   
-    // 👇 PUT THIS EXACT BLOCK HERE
     if (error || !data) {
-      console.log(error)
       setError('Invalid email or password')
       return
     }
   
     localStorage.setItem('user', JSON.stringify(data))
-
-router.push('/admin')
+  
+    // ✅ ROLE-BASED REDIRECT (THIS IS THE FIX)
+    if (data.role === 'admin') {
+      router.push('/admin')   // 👈 admin dashboard page
+    } else {
+      router.push('/employee/clockin-out') // 👈 employee page
+    }
   }
      
   return (
