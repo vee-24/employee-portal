@@ -55,12 +55,8 @@ export default function LoginPage() {
     }
   
     localStorage.setItem('user', JSON.stringify(data))
-  
-    if (data.role === 'admin') {
-      router.push('/manage-employee')
-    } else {
-      router.push('/clockin-out')
-    }
+
+router.push('/dashboard')
   }
      
   return (
