@@ -56,7 +56,7 @@ export default function LoginPage() {
   
     localStorage.setItem('user', JSON.stringify(data))
 
-router.push('/dashboard')
+router.push('/admin')
   }
      
   return (
