@@ -56,7 +56,7 @@ export default function LoginPage() {
     if (data.role === 'admin') {
       router.push('/admin')   // 👈 admin dashboard page
     } else {
-      router.push('/employee/clockin-out') // 👈 employee page
+      router.push('/clockin-out') // 👈 employee page
     }
   }
      
