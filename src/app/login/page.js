@@ -35,29 +35,32 @@ export default function LoginPage() {
     }
   
     setLoading(true)
+    console.log("EMAIL:", email)
+    console.log("PASSWORD:", password)
   
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-  
-    setLoading(false)
-  
-    if (error) {
-      setError('Invalid email or password')
-      return
-    }
-  
-    // store session user
-    localStorage.setItem('user', JSON.stringify(data.user))
-  
-    // get role from employees table
-    const { data: profile } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('email', email)
-      .single()
-  
+    const { data, error } = await supabase
+  .from('employees')
+  .select('*')
+  .eq('email', email)
+  .eq('password', password)
+  .single()
+
+setLoading(false)
+
+if (error || !data) {
+  setError('Invalid email or password')
+  return
+}
+
+// store user
+localStorage.setItem('user', JSON.stringify(data))
+
+// redirect based on role
+if (data.role === 'admin') {
+  router.push('/manage-employee')
+} else {
+  router.push('/clockin-out')
+}
     if (profile?.role === 'admin') {
       router.push('/manage-employee')
     } else {
