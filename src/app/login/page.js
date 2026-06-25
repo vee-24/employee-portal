@@ -39,25 +39,25 @@ export default function LoginPage() {
     console.log("EMAIL:", email)
     console.log("PASSWORD:", password)
   
-    // LOGIN USING YOUR EMPLOYEES TABLE (NOT AUTH)
     const { data, error } = await supabase
       .from('employees')
       .select('*')
       .eq('email', email)
       .eq('password', password)
-      .single()
+      .maybeSingle()
   
     setLoading(false)
   
-    if (error || !data) {
+    console.log("DB RESULT:", data)
+    console.log("DB ERROR:", error)
+  
+    if (!data) {
       setError('Invalid email or password')
       return
     }
   
-    // STORE USER
     localStorage.setItem('user', JSON.stringify(data))
   
-    // ROLE REDIRECT
     if (data.role === 'admin') {
       router.push('/manage-employee')
     } else {
